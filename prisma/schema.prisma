@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(uuid())
+  username     String    @unique
+  email        String?   @unique
+  passwordHash String    @map("password_hash")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  
+  patients     Patient[]
+  
+  @@map("users")
+}
+
+model Patient {
+  id               String    @id @default(uuid())
+  userId           String    @map("user_id")
+  patientId        String    @map("patient_id")
+  name             String
+  age              Int
+  sex              String
+  ethnicity        String?
+  religion         String?
+  nidNumber        String?   @map("nid_number")
+  patientMobile    String?   @map("patient_mobile")
+  spouseMobile     String?   @map("spouse_mobile")
+  relativeMobile   String?   @map("relative_mobile")
+  address          String?
+  district         String?
+  shortHistory     String?   @map("short_history") @db.Text
+  surgicalHistory  String?   @map("surgical_history") @db.Text
+  familyHistory    String?   @map("family_history") @db.Text
+  pastIllness      String?   @map("past_illness") @db.Text
+  tags             String[]
+  specialNotes     String?   @map("special_notes") @db.Text
+  finalDiagnosis   String?   @map("final_diagnosis") @db.Text
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  investigations   InvestigationSession[]
+  
+  @@unique([userId, patientId])
+  @@index([userId])
+  @@index([name])
+  @@index([patientMobile])
+  @@map("patients")
+}
+
+model InvestigationSession {
+  id                String    @id @default(uuid())
+  patientId         String    @map("patient_id")
+  investigationDate DateTime  @map("investigation_date") @db.Date
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  
+  patient           Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  hematologyResults HematologyResult[]
+  lftResults        LFTResult[]
+  rftResults        RFTResult[]
+  
+  @@index([patientId])
+  @@map("investigation_sessions")
+}
+
+model HematologyResult {
+  id          String    @id @default(uuid())
+  sessionId   String    @map("session_id")
+  testName    String    @map("test_name")
+  value       String
+  unit        String?
+  isFavourite Boolean   @default(false) @map("is_favourite")
+  notes       String?   @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at")
+  
+  session     InvestigationSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  @@index([sessionId])
+  @@map("hematology_results")
+}
+
+model LFTResult {
+  id          String    @id @default(uuid())
+  sessionId   String    @map("session_id")
+  testName    String    @map("test_name")
+  value       String
+  unit        String?
+  testMethod  String?   @map("test_method")
+  isFavourite Boolean   @default(false) @map("is_favourite")
+  notes       String?   @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at")
+  
+  session     InvestigationSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  @@index([sessionId])
+  @@map("lft_results")
+}
+
+model RFTResult {
+  id          String    @id @default(uuid())
+  sessionId   String    @map("session_id")
+  testName    String    @map("test_name")
+  value       String
+  unit        String?
+  isFavourite Boolean   @default(false) @map("is_favourite")
+  notes       String?   @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at")
+  
+  session     InvestigationSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  @@index([sessionId])
+  @@map("rft_results")
+}
