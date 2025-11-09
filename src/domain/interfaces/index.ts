@@ -1,3 +1,2 @@
-// Domain interfaces - Contracts
-
 export * from './repositories/IPatientRepository';
+export * from './repositories/IUserRepository';

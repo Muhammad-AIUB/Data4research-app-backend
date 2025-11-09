@@ -1,5 +1,13 @@
-/// <reference types="node" />
-export const appConfig = {
+interface AppConfig {
+  port: number;
+  nodeEnv: string;
+  apiVersion: string;
+  corsOrigin: string[];
+  jwtSecret: string;
+  jwtExpiresIn: string;
+}
+
+export const appConfig: AppConfig = {
   port: parseInt(process.env.PORT || '3000', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
   apiVersion: process.env.API_VERSION || 'v1',

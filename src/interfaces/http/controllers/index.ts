@@ -1,2 +1,2 @@
-// Controllers - Request handlers
-
+export * from './PatientController';
+export * from './AuthController';

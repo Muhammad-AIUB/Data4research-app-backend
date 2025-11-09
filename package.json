@@ -8,7 +8,13 @@
       "build": "tsc",
       "start": "node dist/server.js",
       "prisma:generate": "prisma generate",
-      "prisma:migrate": "prisma migrate dev"
+      "prisma:migrate": "prisma migrate dev",
+      "test:db": "tsx scripts/test-db-connection.ts",
+      "update:db-url": "node scripts/update-connection-string.js",
+      "db:start": "docker-compose up -d",
+      "db:stop": "docker-compose down",
+      "db:logs": "docker-compose logs -f postgres",
+      "db:status": "docker-compose ps"
     },
     "dependencies": {
       "@prisma/client": "^5.20.0",

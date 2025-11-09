@@ -1,3 +1,4 @@
-// Data transfer objects
-
 export * from './CreatePatientDTO';
+export * from './UpdatePatientDTO';
+export * from './RegisterDTO';
+export * from './LoginDTO';
