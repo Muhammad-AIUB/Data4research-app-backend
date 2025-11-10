@@ -61,8 +61,19 @@ export class PatientController {
     try {
       const { query } = req.query;
       const userId = (req as any).user.id;
-      const patients = await this.searchPatientsUseCase.execute(query as string, userId);
-      res.status(HTTP_STATUS.OK).json({ success: true, data: patients.map(p => p.toJSON()) });
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const result = await this.searchPatientsUseCase.execute(query as string, userId, page, limit);
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        data: result.patients.map(p => p.toJSON()),
+        pagination: {
+          page: result.page,
+          limit: limit,
+          total: result.total,
+          totalPages: result.totalPages
+        }
+      });
     } catch (error) {
       next(error);
     }

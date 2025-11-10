@@ -21,6 +21,30 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// API root endpoint - shows available routes
+app.get(`/api/${appConfig.apiVersion}`, (req, res) => {
+  res.json({
+    success: true,
+    message: 'Medical App API v1',
+    endpoints: {
+      auth: {
+        register: `POST /api/${appConfig.apiVersion}/auth/register`,
+        login: `POST /api/${appConfig.apiVersion}/auth/login`
+      },
+      patients: {
+        create: `POST /api/${appConfig.apiVersion}/patients`,
+        list: `GET /api/${appConfig.apiVersion}/patients?page=1&limit=10`,
+        search: `GET /api/${appConfig.apiVersion}/patients/search?query=term&page=1&limit=10`,
+        getById: `GET /api/${appConfig.apiVersion}/patients/:id`,
+        update: `PUT /api/${appConfig.apiVersion}/patients/:id`,
+        delete: `DELETE /api/${appConfig.apiVersion}/patients/:id`
+      },
+      health: `GET /health`
+    },
+    baseUrl: `http://localhost:${appConfig.port}/api/${appConfig.apiVersion}`
+  });
+});
+
 app.use(`/api/${appConfig.apiVersion}`, createRoutes());
 
 app.use(errorHandler);

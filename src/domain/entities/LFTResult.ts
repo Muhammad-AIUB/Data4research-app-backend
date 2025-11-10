@@ -1,0 +1,81 @@
+import { ValidationError } from '@/shared/errors';
+
+export class LFTResult {
+  public readonly id: string;
+  public readonly sessionId: string;
+  public testName: string;
+  public value: string;
+  public unit?: string;
+  public testMethod?: string;
+  public isFavourite: boolean;
+  public notes?: string;
+  public readonly createdAt: Date;
+
+  constructor(
+    id: string,
+    sessionId: string,
+    testName: string,
+    value: string,
+    unit?: string,
+    testMethod?: string,
+    isFavourite: boolean = false,
+    notes?: string,
+    createdAt: Date = new Date()
+  ) {
+    this.id = id;
+    this.sessionId = sessionId;
+    this.testName = testName;
+    this.value = value;
+    this.unit = unit;
+    this.testMethod = testMethod;
+    this.isFavourite = isFavourite;
+    this.notes = notes;
+    this.createdAt = createdAt;
+    this.validate();
+  }
+
+  private validate(): void {
+    if (!this.testName || this.testName.trim().length === 0) {
+      throw new ValidationError('Test name is required');
+    }
+    if (!this.value || this.value.trim().length === 0) {
+      throw new ValidationError('Test value is required');
+    }
+  }
+
+  public toJSON() {
+    return {
+      id: this.id,
+      sessionId: this.sessionId,
+      testName: this.testName,
+      value: this.value,
+      unit: this.unit,
+      testMethod: this.testMethod,
+      isFavourite: this.isFavourite,
+      notes: this.notes,
+      createdAt: this.createdAt
+    };
+  }
+
+  public static create(data: {
+    id: string;
+    sessionId: string;
+    testName: string;
+    value: string;
+    unit?: string;
+    testMethod?: string;
+    isFavourite?: boolean;
+    notes?: string;
+  }): LFTResult {
+    return new LFTResult(
+      data.id,
+      data.sessionId,
+      data.testName,
+      data.value,
+      data.unit,
+      data.testMethod,
+      data.isFavourite,
+      data.notes
+    );
+  }
+}

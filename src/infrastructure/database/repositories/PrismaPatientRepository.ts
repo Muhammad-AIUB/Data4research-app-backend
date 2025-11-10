@@ -83,20 +83,39 @@ export class PrismaPatientRepository implements IPatientRepository {
     };
   }
 
-  async search(query: string, userId: string): Promise<Patient[]> {
-    const patients = await prisma.patient.findMany({
-      where: {
-        userId,
-        OR: [
-          { name: { contains: query, mode: 'insensitive' } },
-          { patientMobile: { contains: query } },
-          { finalDiagnosis: { contains: query, mode: 'insensitive' } },
-          { tags: { has: query } }
-        ]
-      },
-      orderBy: { createdAt: 'desc' }
-    });
-    return patients.map(p => this.toDomain(p));
+  async search(query: string, userId: string, page: number = 1, limit: number = 10): Promise<{
+    patients: Patient[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
+    const skip = (page - 1) * limit;
+    const whereClause = {
+      userId,
+      OR: [
+        { name: { contains: query, mode: 'insensitive' } },
+        { patientMobile: { contains: query } },
+        { finalDiagnosis: { contains: query, mode: 'insensitive' } },
+        { tags: { has: query } }
+      ]
+    };
+
+    const [patients, total] = await Promise.all([
+      prisma.patient.findMany({
+        where: whereClause,
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' }
+      }),
+      prisma.patient.count({ where: whereClause })
+    ]);
+
+    return {
+      patients: patients.map(p => this.toDomain(p)),
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    };
   }
 
   async update(id: string, patient: Patient, userId: string): Promise<Patient> {

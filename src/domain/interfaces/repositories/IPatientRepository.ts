@@ -11,7 +11,12 @@ export interface IPatientRepository {
     page: number;
     totalPages: number;
   }>;
-  search(query: string, userId: string): Promise<Patient[]>;
+  search(query: string, userId: string, page?: number, limit?: number): Promise<{
+    patients: Patient[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }>;
   update(id: string, patient: Patient, userId: string): Promise<Patient>;
   delete(id: string, userId: string): Promise<void>;
   count(userId: string): Promise<number>;

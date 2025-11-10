@@ -52,6 +52,8 @@ model Patient {
   @@index([userId])
   @@index([name])
   @@index([patientMobile])
+  @@index([userId, createdAt])
+  @@index([userId, name])
   @@map("patients")
 }
 
@@ -68,6 +70,8 @@ model InvestigationSession {
   rftResults        RFTResult[]
   
   @@index([patientId])
+  @@index([investigationDate])
+  @@index([patientId, investigationDate])
   @@map("investigation_sessions")
 }
 
