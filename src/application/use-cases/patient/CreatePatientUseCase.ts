@@ -5,6 +5,7 @@ import { ValidationError } from '@/shared/errors';
 import { RELIGION_DEFAULT } from '@/shared/constants';
 import { v4 as uuid } from 'uuid';
 import { logger } from '@/shared/utils';
+import { getCacheService } from '@/infrastructure/cache';
 
 // Helper function to calculate age from date of birth
 function calculateAge(dateOfBirth: string): number {
@@ -66,6 +67,10 @@ export class CreatePatientUseCase {
     });
 
     const savedPatient = await this.patientRepository.save(patient, userId);
+
+    // Invalidate patient list cache for this user
+    const cache = getCacheService();
+    await cache.deletePattern(`patients:list:${userId}:*`);
 
     logger.info('Patient created successfully', { patientId: savedPatient.id, userId });
 

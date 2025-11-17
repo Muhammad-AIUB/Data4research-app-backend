@@ -18,10 +18,12 @@
         "db:optimize": "tsx scripts/optimize-database.ts",
         "db:archive": "tsx scripts/archive-old-data.ts",
         "db:archive:execute": "tsx scripts/archive-old-data.ts --execute",
-        "test:investigations": "tsx scripts/test-investigation-apis.ts"
+        "test:investigations": "tsx scripts/test-investigation-apis.ts",
+        "test:redis": "tsx scripts/test-redis-connection.ts"
     },
     "dependencies": {
         "@prisma/client": "^5.20.0",
+        "@upstash/redis": "^1.35.6",
         "axios": "^1.13.2",
         "bcryptjs": "^2.4.3",
         "compression": "^1.7.4",
@@ -29,8 +31,11 @@
         "dotenv": "^16.4.5",
         "exceljs": "^4.4.0",
         "express": "^4.21.0",
+        "express-rate-limit": "^8.2.1",
+        "express-slow-down": "^3.0.1",
         "form-data": "^4.0.4",
         "helmet": "^7.1.0",
+        "ioredis": "^5.8.2",
         "jsonwebtoken": "^9.0.2",
         "multer": "^2.0.2",
         "uuid": "^10.0.0",

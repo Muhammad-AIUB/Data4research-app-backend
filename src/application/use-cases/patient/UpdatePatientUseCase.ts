@@ -3,6 +3,7 @@ import { IPatientRepository } from '@/domain/interfaces/repositories/IPatientRep
 import { UpdatePatientDTO } from '@/application/dto/UpdatePatientDTO';
 import { NotFoundError, ValidationError } from '@/shared/errors';
 import { logger } from '@/shared/utils';
+import { getCacheService } from '@/infrastructure/cache';
 
 // Helper function to calculate age from date of birth
 function calculateAge(dateOfBirth: string): number {
@@ -65,6 +66,11 @@ export class UpdatePatientUseCase {
     existingPatient.updatedAt = new Date();
 
     const updatedPatient = await this.patientRepository.update(id, existingPatient, userId);
+
+    // Invalidate patient list cache and individual patient cache
+    const cache = getCacheService();
+    await cache.deletePattern(`patients:list:${userId}:*`);
+    await cache.delete(`patient:${id}:${userId}`);
 
     logger.info('Patient updated successfully', { patientId: id, userId });
 
