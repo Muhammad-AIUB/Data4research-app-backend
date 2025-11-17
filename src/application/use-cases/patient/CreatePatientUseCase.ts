@@ -2,8 +2,21 @@ import { Patient } from '@/domain/entities/Patient';
 import { IPatientRepository } from '@/domain/interfaces/repositories/IPatientRepository';
 import { CreatePatientDTO } from '@/application/dto/CreatePatientDTO';
 import { ValidationError } from '@/shared/errors';
+import { RELIGION_DEFAULT } from '@/shared/constants';
 import { v4 as uuid } from 'uuid';
 import { logger } from '@/shared/utils';
+
+// Helper function to calculate age from date of birth
+function calculateAge(dateOfBirth: string): number {
+  const birthDate = new Date(dateOfBirth);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}
 
 export class CreatePatientUseCase {
   constructor(private patientRepository: IPatientRepository) {}
@@ -16,27 +29,30 @@ export class CreatePatientUseCase {
       throw new ValidationError(`Patient ID ${dto.patientId} already exists`);
     }
 
-    if (dto.patientMobile) {
-      const existingByMobile = await this.patientRepository.findByMobile(dto.patientMobile, userId);
-      if (existingByMobile) {
-        throw new ValidationError(`Patient with mobile ${dto.patientMobile} already exists`);
-      }
+    const existingByMobile = await this.patientRepository.findByMobile(dto.patientMobile, userId);
+    if (existingByMobile) {
+      throw new ValidationError(`Patient with mobile ${dto.patientMobile} already exists`);
     }
+
+    // Calculate age from dateOfBirth if not provided or doesn't match
+    const calculatedAge = calculateAge(dto.dateOfBirth);
+    const age = dto.age && Math.abs(dto.age - calculatedAge) <= 1 ? dto.age : calculatedAge;
+
+    // Set default religion to Islam if not provided
+    const religion = dto.religion || RELIGION_DEFAULT;
 
     const patient = Patient.create({
       id: uuid(),
       userId: userId,
       patientId: dto.patientId,
       name: dto.name,
-      age: dto.age,
+      dateOfBirth: dto.dateOfBirth,
+      age: age,
       sex: dto.sex,
-      patientMobile: dto.patientMobile,
       ethnicity: dto.ethnicity,
-      religion: dto.religion,
-      nidNumber: dto.nidNumber,
-      spouseMobile: dto.spouseMobile,
-      relativeMobile: dto.relativeMobile,
-      address: dto.address,
+      religion: religion,
+      patientMobile: dto.patientMobile,
+      firstDegreeRelativeMobile: dto.firstDegreeRelativeMobile,
       district: dto.district,
       shortHistory: dto.shortHistory,
       surgicalHistory: dto.surgicalHistory,
@@ -44,7 +60,10 @@ export class CreatePatientUseCase {
       pastIllness: dto.pastIllness,
       tags: dto.tags,
       specialNotes: dto.specialNotes,
-      finalDiagnosis: dto.finalDiagnosis
+      finalDiagnosis: dto.finalDiagnosis,
+      nidNumber: dto.nidNumber,
+      spouseMobile: dto.spouseMobile,
+      addressDetails: dto.addressDetails
     });
 
     const savedPatient = await this.patientRepository.save(patient, userId);

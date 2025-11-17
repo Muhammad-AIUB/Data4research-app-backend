@@ -4,6 +4,18 @@ import { UpdatePatientDTO } from '@/application/dto/UpdatePatientDTO';
 import { NotFoundError, ValidationError } from '@/shared/errors';
 import { logger } from '@/shared/utils';
 
+// Helper function to calculate age from date of birth
+function calculateAge(dateOfBirth: string): number {
+  const birthDate = new Date(dateOfBirth);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}
+
 export class UpdatePatientUseCase {
   constructor(private patientRepository: IPatientRepository) {}
 
@@ -23,16 +35,15 @@ export class UpdatePatientUseCase {
     }
 
     if (dto.name !== undefined) existingPatient.name = dto.name;
-    if (dto.age !== undefined) existingPatient.age = dto.age;
     if (dto.sex !== undefined) existingPatient.sex = dto.sex;
     if (dto.patientMobile !== undefined) existingPatient.patientMobile = dto.patientMobile;
     if (dto.ethnicity !== undefined) existingPatient.ethnicity = dto.ethnicity;
     if (dto.religion !== undefined) existingPatient.religion = dto.religion;
     if (dto.nidNumber !== undefined) existingPatient.nidNumber = dto.nidNumber;
     if (dto.spouseMobile !== undefined) existingPatient.spouseMobile = dto.spouseMobile;
-    if (dto.relativeMobile !== undefined) existingPatient.relativeMobile = dto.relativeMobile;
-    if (dto.address !== undefined) existingPatient.address = dto.address;
+    if (dto.firstDegreeRelativeMobile !== undefined) existingPatient.firstDegreeRelativeMobile = dto.firstDegreeRelativeMobile;
     if (dto.district !== undefined) existingPatient.district = dto.district;
+    if (dto.addressDetails !== undefined) existingPatient.addressDetails = dto.addressDetails;
     if (dto.shortHistory !== undefined) existingPatient.shortHistory = dto.shortHistory;
     if (dto.surgicalHistory !== undefined) existingPatient.surgicalHistory = dto.surgicalHistory;
     if (dto.familyHistory !== undefined) existingPatient.familyHistory = dto.familyHistory;
@@ -40,6 +51,16 @@ export class UpdatePatientUseCase {
     if (dto.tags !== undefined) existingPatient.tags = dto.tags;
     if (dto.specialNotes !== undefined) existingPatient.specialNotes = dto.specialNotes;
     if (dto.finalDiagnosis !== undefined) existingPatient.finalDiagnosis = dto.finalDiagnosis;
+
+    // Handle dateOfBirth and age update
+    if (dto.dateOfBirth !== undefined) {
+      existingPatient.dateOfBirth = new Date(dto.dateOfBirth);
+      // Recalculate age if dateOfBirth is updated
+      const calculatedAge = calculateAge(dto.dateOfBirth);
+      existingPatient.age = dto.age && Math.abs(dto.age - calculatedAge) <= 1 ? dto.age : calculatedAge;
+    } else if (dto.age !== undefined) {
+      existingPatient.age = dto.age;
+    }
 
     existingPatient.updatedAt = new Date();
 

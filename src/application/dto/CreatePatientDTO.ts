@@ -1,21 +1,22 @@
 export interface CreatePatientDTO {
     patientId: string;
     name: string;
-    age: number;
+    dateOfBirth: string; // ISO date string (YYYY-MM-DD)
+    age: number; // Calculated from dateOfBirth
     sex: 'Male' | 'Female' | 'Other';
-    patientMobile?: string;
-    ethnicity?: string;
-    religion?: string;
+    ethnicity: string;
+    religion?: string; // Optional in DTO, will default to 'Islam' if not provided
     nidNumber?: string;
+    patientMobile: string;
     spouseMobile?: string;
-    relativeMobile?: string;
-    address?: string;
-    district?: string;
-    shortHistory?: string;
-    surgicalHistory?: string;
-    familyHistory?: string;
-    pastIllness?: string;
-    tags?: string[];
-    specialNotes?: string;
-    finalDiagnosis?: string;
+    firstDegreeRelativeMobile: string;
+    district: string;
+    addressDetails?: string; // Optional: house no, road no, village etc
+    shortHistory: string;
+    surgicalHistory: string;
+    familyHistory: string;
+    pastIllness: string;
+    tags: string[];
+    specialNotes: string;
+    finalDiagnosis: string;
   }

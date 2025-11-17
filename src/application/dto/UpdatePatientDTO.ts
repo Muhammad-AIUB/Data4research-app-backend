@@ -1,15 +1,16 @@
 export interface UpdatePatientDTO {
     name?: string;
-    age?: number;
+    dateOfBirth?: string; // ISO date string (YYYY-MM-DD)
+    age?: number; // Will be recalculated if dateOfBirth is updated
     sex?: 'Male' | 'Female' | 'Other';
-    patientMobile?: string;
     ethnicity?: string;
     religion?: string;
     nidNumber?: string;
+    patientMobile?: string;
     spouseMobile?: string;
-    relativeMobile?: string;
-    address?: string;
+    firstDegreeRelativeMobile?: string;
     district?: string;
+    addressDetails?: string;
     shortHistory?: string;
     surgicalHistory?: string;
     familyHistory?: string;

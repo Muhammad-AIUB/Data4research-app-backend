@@ -39,6 +39,9 @@ app.get(`/api/${appConfig.apiVersion}`, (req, res) => {
         update: `PUT /api/${appConfig.apiVersion}/patients/:id`,
         delete: `DELETE /api/${appConfig.apiVersion}/patients/:id`
       },
+      dropdown: {
+        getOptions: `GET /api/${appConfig.apiVersion}/dropdown/options`
+      },
       health: `GET /health`
     },
     baseUrl: `http://localhost:${appConfig.port}/api/${appConfig.apiVersion}`

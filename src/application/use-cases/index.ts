@@ -13,3 +13,8 @@ export * from './investigation/DeleteInvestigationUseCase';
 export * from './export/ExportPatientsUseCase';
 export * from './export/ExportPatientReportUseCase';
 export * from './export/ExportInvestigationUseCase';
+export * from './image/UploadPatientImageUseCase';
+export * from './image/UploadInvestigationImageUseCase';
+export * from './image/GetPatientImagesUseCase';
+export * from './image/GetInvestigationImagesUseCase';
+export * from './image/DeletePatientImageUseCase';

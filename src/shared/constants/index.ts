@@ -23,6 +23,180 @@ export const HTTP_STATUS = {
   export const SEX_OPTIONS = ['Male', 'Female', 'Other'] as const;
   export type Sex = typeof SEX_OPTIONS[number];
   
+  // Dropdown options for patient forms
+  export const ETHNICITY_OPTIONS = [
+    'Caucasian',
+    'African',
+    'South Asian',
+    'East Asian',
+    'Southeast Asian',
+    'Middle Eastern / Arab',
+    'Native American',
+    'Pacific Islander / Polynesian / Micronesian',
+    'Hispanic / Latino',
+    'Aboriginal / Indigenous Australian',
+    'Jewish (Ashkenazi, Sephardic, Mizrahi)',
+    'Mediterranean',
+    'Scandinavian / Northern European',
+    'Black Caribbean',
+    'Mixed Ethnicity (Multiracial)',
+    'Other'
+  ] as const;
+
+  // Ethnicity with subgroups/examples
+  export const ETHNICITY_WITH_SUBGROUPS = {
+    'Caucasian': ['Northern European', 'Southern European', 'Eastern European'],
+    'African': ['West African', 'East African', 'Afro-Caribbean'],
+    'South Asian': ['Indian', 'Pakistani', 'Bangladeshi', 'Sri Lankan'],
+    'East Asian': ['Chinese', 'Japanese', 'Korean'],
+    'Southeast Asian': ['Thai', 'Burmese', 'Filipino', 'Malay', 'Indonesian'],
+    'Middle Eastern / Arab': ['Arabian Peninsula', 'Levant', 'North African'],
+    'Native American': ['North American', 'Central American', 'South American'],
+    'Pacific Islander / Polynesian / Micronesian': ['Samoan', 'Tongan', 'Hawaiian'],
+    'Hispanic / Latino': ['Mexican', 'Central American', 'South American'],
+    'Aboriginal / Indigenous Australian': ['Various tribes'],
+    'Jewish (Ashkenazi, Sephardic, Mizrahi)': ['Ashkenazi', 'Sephardic', 'Mizrahi'],
+    'Mediterranean': ['Italian', 'Greek', 'Turkish', 'Cypriot'],
+    'Scandinavian / Northern European': ['Swedish', 'Finnish', 'Norwegian'],
+    'Black Caribbean': ['Jamaican', 'Trinidadian'],
+    'Mixed Ethnicity (Multiracial)': [],
+    'Other': []
+  } as const;
+  
+  export const RELIGION_OPTIONS = [
+    'Islam',
+    'Hinduism',
+    'Buddhism',
+    'Christianity'
+  ] as const;
+  
+  export const RELIGION_DEFAULT = 'Islam' as const;
+  
+  // All 64 districts of Bangladesh
+  export const DISTRICT_OPTIONS = [
+    'Dhaka',
+    'Faridpur',
+    'Gazipur',
+    'Gopalganj',
+    'Kishoreganj',
+    'Madaripur',
+    'Manikganj',
+    'Munshiganj',
+    'Narayanganj',
+    'Narsingdi',
+    'Rajbari',
+    'Shariatpur',
+    'Tangail',
+    'Chittagong',
+    'Bandarban',
+    'Brahmanbaria',
+    'Chandpur',
+    'Comilla',
+    'Cox\'s Bazar',
+    'Feni',
+    'Khagrachhari',
+    'Lakshmipur',
+    'Noakhali',
+    'Rangamati',
+    'Sylhet',
+    'Habiganj',
+    'Moulvibazar',
+    'Sunamganj',
+    'Barisal',
+    'Barguna',
+    'Bhola',
+    'Jhalokati',
+    'Patuakhali',
+    'Pirojpur',
+    'Khulna',
+    'Bagerhat',
+    'Chuadanga',
+    'Jashore',
+    'Jhenaidah',
+    'Kushtia',
+    'Magura',
+    'Meherpur',
+    'Narail',
+    'Satkhira',
+    'Rajshahi',
+    'Bogura',
+    'Chapainawabganj',
+    'Joypurhat',
+    'Naogaon',
+    'Natore',
+    'Pabna',
+    'Sirajganj',
+    'Rangpur',
+    'Dinajpur',
+    'Gaibandha',
+    'Kurigram',
+    'Lalmonirhat',
+    'Nilphamari',
+    'Panchagarh',
+    'Thakurgaon',
+    'Mymensingh',
+    'Jamalpur',
+    'Netrokona',
+    'Sherpur'
+  ] as const;
+  
+  // Common test names for investigations
+  export const HEMATOLOGY_TEST_NAMES = [
+    'Hemoglobin (Hb)',
+    'Total WBC Count',
+    'RBC Count',
+    'Platelet Count',
+    'Hematocrit (HCT)',
+    'MCV',
+    'MCH',
+    'MCHC',
+    'Neutrophils',
+    'Lymphocytes',
+    'Monocytes',
+    'Eosinophils',
+    'Basophils',
+    'ESR',
+    'Other'
+  ] as const;
+  
+  export const LFT_TEST_NAMES = [
+    'ALT (SGPT)',
+    'AST (SGOT)',
+    'ALP',
+    'Total Bilirubin',
+    'Direct Bilirubin',
+    'Indirect Bilirubin',
+    'Total Protein',
+    'Albumin',
+    'Globulin',
+    'A/G Ratio',
+    'GGT',
+    'PT',
+    'INR',
+    'Other'
+  ] as const;
+  
+  export const RFT_TEST_NAMES = [
+    'Serum Creatinine',
+    'Blood Urea',
+    'Uric Acid',
+    'Serum Sodium',
+    'Serum Potassium',
+    'Serum Chloride',
+    'eGFR',
+    'BUN',
+    'Other'
+  ] as const;
+  
+  export const TEST_METHODS = [
+    'Automated',
+    'Manual',
+    'ELISA',
+    'Chemiluminescence',
+    'Colorimetric',
+    'Other'
+  ] as const;
+  
   export const REGEX = {
     MOBILE_BD: /^01[3-9]\d{8}$/,
     EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,

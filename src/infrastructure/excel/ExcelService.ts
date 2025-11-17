@@ -79,16 +79,20 @@ export class ExcelService {
     const patientInfo = [
       { field: 'Patient ID', value: patient.patientId },
       { field: 'Name', value: patient.name },
+      { field: 'Date of Birth', value: patient.dateOfBirth.toISOString().split('T')[0] },
       { field: 'Age', value: patient.age.toString() },
       { field: 'Sex', value: patient.sex },
-      { field: 'Mobile', value: patient.patientMobile || 'N/A' },
-      { field: 'Address', value: patient.address || 'N/A' },
-      { field: 'District', value: patient.district || 'N/A' },
-      { field: 'Short History', value: patient.shortHistory || 'N/A' },
-      { field: 'Surgical History', value: patient.surgicalHistory || 'N/A' },
-      { field: 'Family History', value: patient.familyHistory || 'N/A' },
-      { field: 'Past Illness', value: patient.pastIllness || 'N/A' },
-      { field: 'Final Diagnosis', value: patient.finalDiagnosis || 'N/A' }
+      { field: 'Ethnicity', value: patient.ethnicity },
+      { field: 'Religion', value: patient.religion },
+      { field: 'Mobile', value: patient.patientMobile },
+      { field: 'First Degree Relative Mobile', value: patient.firstDegreeRelativeMobile },
+      { field: 'District', value: patient.district },
+      { field: 'Address Details', value: patient.addressDetails || 'N/A' },
+      { field: 'Short History', value: patient.shortHistory },
+      { field: 'Surgical History', value: patient.surgicalHistory },
+      { field: 'Family History', value: patient.familyHistory },
+      { field: 'Past Illness', value: patient.pastIllness },
+      { field: 'Final Diagnosis', value: patient.finalDiagnosis }
     ];
 
     patientInfo.forEach(info => {

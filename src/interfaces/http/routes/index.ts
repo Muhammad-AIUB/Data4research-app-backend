@@ -1,9 +1,20 @@
 import { Router } from 'express';
+import express from 'express';
+import path from 'path';
 import { createPatientRoutes } from './patient.routes';
 import { createAuthRoutes } from './auth.routes';
 import { createInvestigationRoutes } from './investigation.routes';
 import { createExportRoutes } from './export.routes';
-import { PatientController, AuthController, InvestigationController, ExportController } from '../controllers';
+import { createImageRoutes } from './image.routes';
+import { createDropdownRoutes } from './dropdown.routes';
+import { 
+  PatientController, 
+  AuthController, 
+  InvestigationController, 
+  ExportController,
+  ImageController,
+  DropdownController
+} from '../controllers';
 import { 
   CreatePatientUseCase, 
   GetPatientUseCase, 
@@ -19,15 +30,22 @@ import {
   DeleteInvestigationUseCase,
   ExportPatientsUseCase,
   ExportPatientReportUseCase,
-  ExportInvestigationUseCase
+  ExportInvestigationUseCase,
+  UploadPatientImageUseCase,
+  UploadInvestigationImageUseCase,
+  GetPatientImagesUseCase,
+  GetInvestigationImagesUseCase,
+  DeletePatientImageUseCase
 } from '@/application/use-cases';
 import { 
   PrismaPatientRepository, 
   PrismaUserRepository,
-  PrismaInvestigationRepository
+  PrismaInvestigationRepository,
+  PrismaImageRepository
 } from '@/infrastructure/database';
 import { JWTService, PasswordService } from '@/infrastructure/auth';
 import { ExcelService } from '@/infrastructure/excel';
+import { FileStorageService } from '@/infrastructure/storage';
 
 export const createRoutes = () => {
   const router = Router();
@@ -35,9 +53,11 @@ export const createRoutes = () => {
   const patientRepository = new PrismaPatientRepository();
   const userRepository = new PrismaUserRepository();
   const investigationRepository = new PrismaInvestigationRepository();
+  const imageRepository = new PrismaImageRepository();
   const jwtService = new JWTService();
   const passwordService = new PasswordService();
   const excelService = new ExcelService();
+  const fileStorageService = new FileStorageService();
 
   const createPatientUseCase = new CreatePatientUseCase(patientRepository);
   const getPatientUseCase = new GetPatientUseCase(patientRepository);
@@ -70,10 +90,29 @@ export const createRoutes = () => {
     exportPatientsUseCase, exportPatientReportUseCase, exportInvestigationUseCase
   );
 
+  const uploadPatientImageUseCase = new UploadPatientImageUseCase(imageRepository, patientRepository, fileStorageService);
+  const uploadInvestigationImageUseCase = new UploadInvestigationImageUseCase(imageRepository, investigationRepository, fileStorageService);
+  const getPatientImagesUseCase = new GetPatientImagesUseCase(imageRepository);
+  const getInvestigationImagesUseCase = new GetInvestigationImagesUseCase(imageRepository);
+  const deletePatientImageUseCase = new DeletePatientImageUseCase(imageRepository, fileStorageService);
+  const imageController = new ImageController(
+    uploadPatientImageUseCase,
+    uploadInvestigationImageUseCase,
+    getPatientImagesUseCase,
+    getInvestigationImagesUseCase,
+    deletePatientImageUseCase
+  );
+
+  const dropdownController = new DropdownController();
+
+  router.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
   router.use('/auth', createAuthRoutes(authController));
   router.use('/patients', createPatientRoutes(patientController));
   router.use('/investigations', createInvestigationRoutes(investigationController));
   router.use('/export', createExportRoutes(exportController));
+  router.use('/images', createImageRoutes(imageController));
+  router.use('/dropdown', createDropdownRoutes(dropdownController));
 
   return router;
 };
