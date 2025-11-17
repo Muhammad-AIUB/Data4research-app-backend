@@ -1,5 +1,12 @@
 import { z } from 'zod';
-import { REGEX, SEX_OPTIONS, ETHNICITY_OPTIONS, RELIGION_OPTIONS, DISTRICT_OPTIONS } from '@/shared/constants';
+import {
+  REGEX,
+  SEX_OPTIONS,
+  ETHNICITY_OPTIONS,
+  RELIGION_OPTIONS,
+  DISTRICT_OPTIONS,
+  CLINICAL_SECTIONS
+} from '@/shared/constants';
 
 // Helper function to calculate age from date of birth
 const calculateAge = (dateOfBirth: string): number => {
@@ -13,11 +20,12 @@ const calculateAge = (dateOfBirth: string): number => {
   return age;
 };
 
+const AgeSchema = z.number().int().min(0).max(150);
+
 const CreatePatientBaseSchema = z.object({
   patientId: z.string().regex(REGEX.PATIENT_ID, 'Patient ID must be in format P000001'),
   name: z.string().min(2, 'Name must be at least 2 characters').max(100),
   dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date of birth must be in format YYYY-MM-DD'),
-  age: z.number().int().min(0).max(150),
   sex: z.enum(SEX_OPTIONS),
   ethnicity: z.enum(ETHNICITY_OPTIONS, { errorMap: () => ({ message: 'Invalid ethnicity' }) }),
   religion: z.enum(RELIGION_OPTIONS, { errorMap: () => ({ message: 'Invalid religion' }) }).optional(),
@@ -36,26 +44,43 @@ const CreatePatientBaseSchema = z.object({
   finalDiagnosis: z.string().min(1, 'Final diagnosis is required')
 });
 
-export const CreatePatientSchema = CreatePatientBaseSchema.refine((data) => {
-  // Validate that age matches dateOfBirth
-  const calculatedAge = calculateAge(data.dateOfBirth);
-  return Math.abs(calculatedAge - data.age) <= 1; // Allow 1 year difference for rounding
-}, {
-  message: 'Age does not match date of birth',
-  path: ['age']
+export const CreatePatientSchema = CreatePatientBaseSchema;
+
+export const UpdatePatientSchema = CreatePatientBaseSchema.partial()
+  .extend({
+    age: AgeSchema.optional()
+  })
+  .refine((data) => {
+    // Only validate age/dateOfBirth if both are provided
+    if (data.dateOfBirth && data.age !== undefined) {
+      const calculatedAge = calculateAge(data.dateOfBirth);
+      return Math.abs(calculatedAge - data.age) <= 1;
+    }
+    return true;
+  }, {
+    message: 'Age does not match date of birth',
+    path: ['age']
+  });
+
+const ClinicalSectionEnum = z.enum(CLINICAL_SECTIONS);
+
+export const ClinicalEntrySchema = z.object({
+  section: ClinicalSectionEnum,
+  recordedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Recorded date must be in format YYYY-MM-DD'),
+  values: z
+    .record(z.union([z.string(), z.number(), z.boolean(), z.null(), z.array(z.unknown()), z.record(z.unknown())]))
+    .refine((val) => Object.keys(val).length > 0, 'Values cannot be empty'),
+  meta: z.record(z.unknown()).optional()
 });
 
-export const UpdatePatientSchema = CreatePatientBaseSchema.partial().refine((data) => {
-  // Only validate age/dateOfBirth if both are provided
-  if (data.dateOfBirth && data.age !== undefined) {
-    const calculatedAge = calculateAge(data.dateOfBirth);
-    return Math.abs(calculatedAge - data.age) <= 1;
+export const ClinicalEntryBulkSchema = z.array(ClinicalEntrySchema).min(1, 'At least one entry is required');
+
+export const ClinicalEntryUpdateSchema = ClinicalEntrySchema.partial().refine(
+  (data) => !!(data.recordedAt || data.values || data.meta),
+  {
+    message: 'At least one field must be provided to update an entry'
   }
-  return true;
-}, {
-  message: 'Age does not match date of birth',
-  path: ['age']
-});
+);
 
 export const SearchPatientSchema = z.object({
   query: z.string().min(2, 'Search query must be at least 2 characters')

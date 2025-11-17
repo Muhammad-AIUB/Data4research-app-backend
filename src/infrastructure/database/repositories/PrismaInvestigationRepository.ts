@@ -71,7 +71,7 @@ export class PrismaInvestigationRepository implements IInvestigationRepository {
   }
 
   async addLFTResult(result: LFTResult): Promise<LFTResult> {
-    const saved = await prisma.lFTResult.create({
+    const saved = await prisma.lftResult.create({
       data: {
         id: result.id,
         sessionId: result.sessionId,
@@ -88,7 +88,7 @@ export class PrismaInvestigationRepository implements IInvestigationRepository {
   }
 
   async addRFTResult(result: RFTResult): Promise<RFTResult> {
-    const saved = await prisma.rFTResult.create({
+    const saved = await prisma.rftResult.create({
       data: {
         id: result.id,
         sessionId: result.sessionId,
@@ -141,7 +141,7 @@ export class PrismaInvestigationRepository implements IInvestigationRepository {
   }
 
   async updateLFTResult(id: string, result: LFTResult): Promise<LFTResult> {
-    const updated = await prisma.lFTResult.update({
+    const updated = await prisma.lftResult.update({
       where: { id },
       data: {
         testName: result.testName,
@@ -156,7 +156,7 @@ export class PrismaInvestigationRepository implements IInvestigationRepository {
   }
 
   async updateRFTResult(id: string, result: RFTResult): Promise<RFTResult> {
-    const updated = await prisma.rFTResult.update({
+    const updated = await prisma.rftResult.update({
       where: { id },
       data: {
         testName: result.testName,
@@ -174,11 +174,11 @@ export class PrismaInvestigationRepository implements IInvestigationRepository {
   }
 
   async deleteLFTResult(id: string): Promise<void> {
-    await prisma.lFTResult.delete({ where: { id } });
+    await prisma.lftResult.delete({ where: { id } });
   }
 
   async deleteRFTResult(id: string): Promise<void> {
-    await prisma.rFTResult.delete({ where: { id } });
+    await prisma.rftResult.delete({ where: { id } });
   }
 
   private sessionToDomain(data: any): InvestigationSession {

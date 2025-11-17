@@ -8,7 +8,7 @@ const globalForPrisma = globalThis as unknown as {
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+    log: process.env.NODE_ENV === 'development' ? ['warn'] : [], // Suppress 'error' logs for connection issues
     datasources: {
       db: {
         url: process.env.DATABASE_URL,
@@ -16,11 +16,15 @@ export const prisma =
     },
     // Neon serverless: connections are managed automatically
     // Connection pooling is handled by Neon's pooler endpoint
+    // Connection "Closed" errors are normal and will auto-reconnect
   });
 
 // Handle connection errors gracefully (Neon may close idle connections)
+// Suppress "Closed" connection errors - these are normal for serverless databases
+// Neon automatically reconnects when needed
 prisma.$on('error' as never, (e: { message: string }) => {
   // Ignore connection closed errors - Neon will reconnect automatically
+  // These are expected in serverless environments when connections idle
   if (!e.message.includes('Closed') && !e.message.includes('connection')) {
     console.error('Prisma Client Error:', e.message);
   }

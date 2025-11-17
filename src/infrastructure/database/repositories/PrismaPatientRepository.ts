@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { IPatientRepository } from '@/domain/interfaces/repositories/IPatientRepository';
 import { Patient } from '@/domain/entities/Patient';
 import { prisma } from '@/infrastructure/database/prisma/client';
@@ -94,9 +95,9 @@ export class PrismaPatientRepository implements IPatientRepository {
     const whereClause = {
       userId,
       OR: [
-        { name: { contains: query, mode: 'insensitive' } },
+        { name: { contains: query, mode: Prisma.QueryMode.insensitive } },
         { patientMobile: { contains: query } },
-        { finalDiagnosis: { contains: query, mode: 'insensitive' } },
+        { finalDiagnosis: { contains: query, mode: Prisma.QueryMode.insensitive } },
         { tags: { has: query } }
       ]
     };

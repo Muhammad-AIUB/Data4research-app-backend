@@ -196,6 +196,128 @@ export const HTTP_STATUS = {
     'Colorimetric',
     'Other'
   ] as const;
+
+  export const CLINICAL_SECTIONS = ['ON_EXAMINATION', 'HEMATOLOGY', 'LFT', 'RFT'] as const;
+  export type ClinicalSection = typeof CLINICAL_SECTIONS[number];
+
+  export const CLINICAL_DROPDOWNS = {
+    ON_EXAMINATION: {
+      anaemia: ['Absent', 'Present', 'Mild', 'Moderate', 'Severe'],
+      jaundice: ['Absent', 'Present', 'Mild', 'Moderate', 'Severe'],
+      oedema: ['Absent', 'Present', '+', '++', '+++'],
+      ascites: ['Absent', 'Mild', 'Moderate', 'Severe'],
+      hepaticEncephalopathy: ['No encephalopathy', 'Grade I', 'Grade II', 'Grade III', 'Grade IV'],
+      auscultationHeart: ['Normal', 'Abnormal'],
+      auscultationLung: ['Normal', 'Abnormal'],
+      dialysis: ['Yes', 'No']
+    },
+    HEMATOLOGY: {
+      qualitative: ['Positive', 'Negative', 'Reactive', 'Non-reactive'],
+      method: ['Automated', 'Manual', 'ELISA', 'CLIA', 'Chemiluminescence', 'Colorimetric', 'Other']
+    },
+    LFT: {
+      qualitative: ['Positive', 'Negative'],
+      hbsAg: ['Positive', 'Negative'],
+      antiHbe: ['Positive', 'Negative'],
+      hbeAg: ['Positive', 'Negative'],
+      antiHbcIgm: ['Positive', 'Negative'],
+      antiHbcTotal: ['Positive', 'Negative'],
+      antiHcv: ['Positive', 'Negative'],
+      antiHavIgm: ['Positive', 'Negative'],
+      antiHevIgm: ['Positive', 'Negative'],
+      ascites: ['Absent', 'Mild', 'Moderate', 'Marked'],
+      hepaticEncephalopathy: ['No encephalopathy', 'Grade I', 'Grade II', 'Grade III', 'Grade IV'],
+      isPatientGettingDialysis: ['Yes', 'No'],
+      childPughClass: ['A', 'B', 'C'],
+      method: ['Automated', 'Manual', 'Other']
+    },
+    RFT: {
+      creatinineUnit: ['mg/dL', 'µmol/L'],
+      electrolytesUnit: ['mmol/L', 'mEq/L']
+    }
+  } as const;
+
+  export const ON_EXAMINATION_FIELDS = [
+    { key: 'heightCm', label: 'Height', unit: 'cm' },
+    { key: 'heightFeet', label: 'Height', unit: 'feet' },
+    { key: 'heightInch', label: 'Height', unit: 'inch' },
+    { key: 'weightKg', label: 'Weight', unit: 'kg' },
+    { key: 'weightLb', label: 'Weight', unit: 'lb' },
+    { key: 'systolic', label: 'Systolic BP', unit: 'mmHg' },
+    { key: 'diastolic', label: 'Diastolic BP', unit: 'mmHg' },
+    { key: 'meanArterialPressure', label: 'Mean Arterial Pressure', unit: 'mmHg' },
+    { key: 'pulse', label: 'Pulse', unit: 'bpm' },
+    { key: 'respiratoryRate', label: 'Respiratory Rate', unit: '/min' },
+    { key: 'spo2', label: 'Oxygen Saturation', unit: '%' },
+    { key: 'bmi', label: 'BMI', unit: 'kg/m²' },
+    { key: 'idealBodyWeightKg', label: 'Ideal Body Weight', unit: 'kg' }
+  ] as const;
+
+  export const HEMATOLOGY_FIELDS = [
+    { key: 'rbc', label: 'RBC', unit: 'million/µL' },
+    { key: 'hb', label: 'Hb / Hgb', unit: 'g/dL' },
+    { key: 'hct', label: 'HCT', unit: '%' },
+    { key: 'mcv', label: 'MCV', unit: 'fL' },
+    { key: 'mch', label: 'MCH', unit: 'pg' },
+    { key: 'mchc', label: 'MCHC', unit: 'g/dL' },
+    { key: 'rdw', label: 'RDW', unit: '%' },
+    { key: 'wbc', label: 'WBC', unit: 'cells/µL' },
+    { key: 'neutrophils', label: 'Neutrophils', unit: '%' },
+    { key: 'lymphocytes', label: 'Lymphocytes', unit: '%' },
+    { key: 'monocytes', label: 'Monocytes', unit: '%' },
+    { key: 'eosinophils', label: 'Eosinophils', unit: '%' },
+    { key: 'basophils', label: 'Basophils', unit: '%' },
+    { key: 'plateletCount', label: 'Platelet Count', unit: '×10³/µL' },
+    { key: 'esr', label: 'ESR', unit: 'mm/hr' },
+    { key: 'prothrombinTime', label: 'Prothrombin Time', unit: 'sec' },
+    { key: 'aptt', label: 'APTT', unit: 'sec' },
+    { key: 'dDimer', label: 'D-dimer', unit: 'µg/mL' },
+    { key: 'bleedingTime', label: 'Bleeding Time', unit: 'sec' },
+    { key: 'clottingTime', label: 'Clotting Time', unit: 'sec' },
+    { key: 'serumIron', label: 'Serum Iron', unit: 'µg/dL' },
+    { key: 'tibc', label: 'TIBC', unit: 'µg/dL' },
+    { key: 'ferritin', label: 'Serum Ferritin', unit: 'ng/mL' },
+    { key: 'tsat', label: 'TSAT', unit: '%' },
+    { key: 'vitaminB12', label: 'S. B12 Level', unit: 'pg/mL' },
+    { key: 'folate', label: 'S. Folate', unit: 'ng/mL' }
+  ] as const;
+
+  export const LFT_FIELDS = [
+    { key: 'alt', label: 'ALT / SGPT', unit: 'U/L' },
+    { key: 'ast', label: 'AST / SGOT', unit: 'U/L' },
+    { key: 'alp', label: 'ALP', unit: 'U/L' },
+    { key: 'bilirubinTotal', label: 'Bilirubin (Total)', unit: 'mg/dL' },
+    { key: 'bilirubinDirect', label: 'Bilirubin (Direct)', unit: 'mg/dL' },
+    { key: 'bilirubinIndirect', label: 'Bilirubin (Indirect)', unit: 'mg/dL' },
+    { key: 'prothrombinTime', label: 'Prothrombin Time', unit: 'sec' },
+    { key: 'inr', label: 'INR', unit: '' },
+    { key: 'albumin', label: 'S. Albumin', unit: 'g/dL' },
+    { key: 'globulin', label: 'S. Globulin', unit: 'g/dL' },
+    { key: 'agRatio', label: 'A/G Ratio', unit: '' },
+    { key: 'totalProtein', label: 'S. Total Protein', unit: 'g/dL' },
+    { key: 'hbsAg', label: 'HBsAg', unit: 'Result' },
+    { key: 'antiHbe', label: 'Anti HBe', unit: 'Result' },
+    { key: 'hbeAg', label: 'HBeAg', unit: 'Result' },
+    { key: 'antiHbcIgm', label: 'Anti HBc IgM', unit: 'Result' },
+    { key: 'antiHbcTotal', label: 'Anti HBc Total', unit: 'Result' },
+    { key: 'hbvDna', label: 'HBV DNA', unit: 'IU/mL' },
+    { key: 'antiHcv', label: 'Anti HCV', unit: 'Result' },
+    { key: 'hcvRna', label: 'HCV RNA', unit: 'IU/mL' },
+    { key: 'antiHavIgm', label: 'Anti HAV IgM', unit: 'Result' },
+    { key: 'antiHevIgm', label: 'Anti HEV IgM', unit: 'Result' },
+    { key: 'meldScore', label: 'MELD Score', unit: '' },
+    { key: 'meldNaScore', label: 'MELD-Na Score', unit: '' }
+  ] as const;
+
+  export const RFT_FIELDS = [
+    { key: 'creatinine', label: 'S. Creatinine (mg/dL)', unit: 'mg/dL' },
+    { key: 'creatinineUmol', label: 'S. Creatinine (µmol/L)', unit: 'µmol/L' },
+    { key: 'sodium', label: 'Sodium (Na+)', unit: 'mmol/L' },
+    { key: 'potassium', label: 'Potassium (K+)', unit: 'mmol/L' },
+    { key: 'chloride', label: 'Chloride (Cl-)', unit: 'mmol/L' },
+    { key: 'bicarbonate', label: 'Bicarbonate (HCO3-)', unit: 'mmol/L' },
+    { key: 'bun', label: 'Blood Urea Nitrogen (BUN)', unit: 'mg/dL' }
+  ] as const;
   
   export const REGEX = {
     MOBILE_BD: /^01[3-9]\d{8}$/,

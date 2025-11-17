@@ -18,3 +18,7 @@ export * from './image/UploadInvestigationImageUseCase';
 export * from './image/GetPatientImagesUseCase';
 export * from './image/GetInvestigationImagesUseCase';
 export * from './image/DeletePatientImageUseCase';
+export * from './clinical/CreateClinicalEntryUseCase';
+export * from './clinical/ListClinicalEntriesUseCase';
+export * from './clinical/UpdateClinicalEntryUseCase';
+export * from './clinical/DeleteClinicalEntryUseCase';

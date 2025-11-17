@@ -3,11 +3,15 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
+import { v4 as uuid } from 'uuid';
 import { appConfig } from '@/config/app.config';
 import { connectDatabase } from '@/infrastructure/database/prisma/client';
 import { createRoutes } from '@/interfaces/http/routes';
 import { errorHandler } from '@/interfaces/http/middlewares';
 import { logger } from '@/shared/utils';
+import { PrismaUserRepository } from '@/infrastructure/database';
+import { PasswordService } from '@/infrastructure/auth/PasswordService';
+import { User } from '@/domain/entities';
 
 const app = express();
 
@@ -25,7 +29,7 @@ app.get('/health', (req, res) => {
 app.get(`/api/${appConfig.apiVersion}`, (req, res) => {
   res.json({
     success: true,
-    message: 'Medical App API v1',
+    message: 'Data4Research App API v1',
     endpoints: {
       auth: {
         register: `POST /api/${appConfig.apiVersion}/auth/register`,
@@ -42,6 +46,13 @@ app.get(`/api/${appConfig.apiVersion}`, (req, res) => {
       dropdown: {
         getOptions: `GET /api/${appConfig.apiVersion}/dropdown/options`
       },
+      clinicalData: {
+        create: `POST /api/${appConfig.apiVersion}/clinical`,
+        list: `GET /api/${appConfig.apiVersion}/clinical/:patientId/:section`,
+        getById: `GET /api/${appConfig.apiVersion}/clinical/:entryId`,
+        update: `PUT /api/${appConfig.apiVersion}/clinical/:entryId`,
+        delete: `DELETE /api/${appConfig.apiVersion}/clinical/:entryId`
+      },
       health: `GET /health`
     },
     baseUrl: `http://localhost:${appConfig.port}/api/${appConfig.apiVersion}`
@@ -52,8 +63,36 @@ app.use(`/api/${appConfig.apiVersion}`, createRoutes());
 
 app.use(errorHandler);
 
+const ensureAdminUser = async () => {
+  const { adminUsername, adminEmail, adminPassword } = appConfig;
+  if (!adminUsername || !adminPassword) {
+    logger.warn('Admin credentials are not configured. Skipping default admin creation.');
+    return;
+  }
+
+  const userRepository = new PrismaUserRepository();
+  const passwordService = new PasswordService();
+
+  const existingAdmin = await userRepository.findByUsername(adminUsername);
+  if (existingAdmin) {
+    logger.info(`Admin user already exists (username: ${adminUsername}).`);
+    return;
+  }
+
+  const passwordHash = await passwordService.hash(adminPassword);
+  const adminUser = User.create({
+    id: uuid(),
+    username: adminUsername,
+    email: adminEmail,
+    passwordHash
+  });
+
+  await userRepository.save(adminUser);
+  logger.info(`Default admin user created (username: ${adminUsername}).`);
+};
+
 const startServer = async (): Promise<void> => {
-  console.log(`🚀 Starting Medical App Backend...`);
+  console.log(`🚀 Starting Data4Research App Backend...`);
   console.log(`📍 Environment: ${appConfig.nodeEnv}`);
   console.log(`🌐 Port: ${appConfig.port}`);
   
@@ -66,6 +105,7 @@ const startServer = async (): Promise<void> => {
     process.exit(1);
   }
   
+  await ensureAdminUser();
   // TODO: Initialize Redis cache
   
   // Start HTTP server

@@ -7,13 +7,15 @@ import { createInvestigationRoutes } from './investigation.routes';
 import { createExportRoutes } from './export.routes';
 import { createImageRoutes } from './image.routes';
 import { createDropdownRoutes } from './dropdown.routes';
+import { createClinicalRoutes } from './clinical.routes';
 import { 
   PatientController, 
   AuthController, 
   InvestigationController, 
   ExportController,
   ImageController,
-  DropdownController
+  DropdownController,
+  ClinicalDataController
 } from '../controllers';
 import { 
   CreatePatientUseCase, 
@@ -35,13 +37,18 @@ import {
   UploadInvestigationImageUseCase,
   GetPatientImagesUseCase,
   GetInvestigationImagesUseCase,
-  DeletePatientImageUseCase
+  DeletePatientImageUseCase,
+  CreateClinicalEntryUseCase,
+  ListClinicalEntriesUseCase,
+  UpdateClinicalEntryUseCase,
+  DeleteClinicalEntryUseCase
 } from '@/application/use-cases';
 import { 
   PrismaPatientRepository, 
   PrismaUserRepository,
   PrismaInvestigationRepository,
-  PrismaImageRepository
+  PrismaImageRepository,
+  PrismaPatientClinicalRepository
 } from '@/infrastructure/database';
 import { JWTService, PasswordService } from '@/infrastructure/auth';
 import { ExcelService } from '@/infrastructure/excel';
@@ -54,6 +61,7 @@ export const createRoutes = () => {
   const userRepository = new PrismaUserRepository();
   const investigationRepository = new PrismaInvestigationRepository();
   const imageRepository = new PrismaImageRepository();
+  const clinicalRepository = new PrismaPatientClinicalRepository();
   const jwtService = new JWTService();
   const passwordService = new PasswordService();
   const excelService = new ExcelService();
@@ -68,6 +76,17 @@ export const createRoutes = () => {
   const patientController = new PatientController(
     createPatientUseCase, getPatientUseCase, listPatientsUseCase,
     searchPatientsUseCase, updatePatientUseCase, deletePatientUseCase
+  );
+
+  const createClinicalEntryUseCase = new CreateClinicalEntryUseCase(patientRepository, clinicalRepository);
+  const listClinicalEntriesUseCase = new ListClinicalEntriesUseCase(patientRepository, clinicalRepository);
+  const updateClinicalEntryUseCase = new UpdateClinicalEntryUseCase(patientRepository, clinicalRepository);
+  const deleteClinicalEntryUseCase = new DeleteClinicalEntryUseCase(patientRepository, clinicalRepository);
+  const clinicalController = new ClinicalDataController(
+    createClinicalEntryUseCase,
+    listClinicalEntriesUseCase,
+    updateClinicalEntryUseCase,
+    deleteClinicalEntryUseCase
   );
 
   const registerUseCase = new RegisterUseCase(userRepository, passwordService, jwtService);
@@ -109,6 +128,7 @@ export const createRoutes = () => {
 
   router.use('/auth', createAuthRoutes(authController));
   router.use('/patients', createPatientRoutes(patientController));
+  router.use('/patients', createClinicalRoutes(clinicalController));
   router.use('/investigations', createInvestigationRoutes(investigationController));
   router.use('/export', createExportRoutes(exportController));
   router.use('/images', createImageRoutes(imageController));

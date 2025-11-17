@@ -7,129 +7,198 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model hematology_results {
-  id                     String                 @id
-  session_id             String
-  test_name              String
-  value                  String
-  unit                   String?
-  is_favourite           Boolean                @default(false)
-  notes                  String?
-  created_at             DateTime               @default(now())
-  investigation_sessions investigation_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
-
-  @@index([session_id])
+model User {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  email        String?  @unique
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  patients     Patient[]
+  
+  @@map("users")
 }
 
-model investigation_images {
-  id                     String                 @id
-  investigation_id       String
-  image_path             String
-  image_type             String
-  description            String?
-  created_at             DateTime               @default(now())
-  investigation_sessions investigation_sessions @relation(fields: [investigation_id], references: [id], onDelete: Cascade)
-
-  @@index([investigation_id])
-}
-
-model investigation_sessions {
-  id                   String                 @id
-  patient_id           String
-  investigation_date   DateTime               @db.Date
-  created_at           DateTime               @default(now())
-  updated_at           DateTime
-  hematology_results   hematology_results[]
-  investigation_images investigation_images[]
-  patients             patients               @relation(fields: [patient_id], references: [id], onDelete: Cascade)
-  lft_results          lft_results[]
-  rft_results          rft_results[]
-
-  @@index([patient_id])
-}
-
-model lft_results {
-  id                     String                 @id
-  session_id             String
-  test_name              String
-  value                  String
-  unit                   String?
-  test_method            String?
-  is_favourite           Boolean                @default(false)
-  notes                  String?
-  created_at             DateTime               @default(now())
-  investigation_sessions investigation_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
-
-  @@index([session_id])
-}
-
-model patient_images {
-  id          String   @id
-  patient_id  String
-  image_path  String
-  image_type  String
-  description String?
-  created_at  DateTime @default(now())
-  patients    patients @relation(fields: [patient_id], references: [id], onDelete: Cascade)
-
-  @@index([patient_id])
-}
-
-model patients {
-  id                           String                   @id
-  user_id                      String
-  patient_id                   String
-  name                         String
-  age                          Int
-  sex                          String
-  ethnicity                    String
-  religion                     String
-  nid_number                   String?
-  patient_mobile               String
-  spouse_mobile                String?
-  district                     String
-  short_history                String
-  surgical_history             String
-  family_history               String
-  past_illness                 String
-  tags                         String[]
-  special_notes                String
-  final_diagnosis              String
-  created_at                   DateTime                 @default(now())
-  updated_at                   DateTime
-  date_of_birth                DateTime                 @db.Date
-  first_degree_relative_mobile String
-  address_details              String?
-  investigation_sessions       investigation_sessions[]
-  patient_images               patient_images[]
-  users                        users                    @relation(fields: [user_id], references: [id], onDelete: Cascade)
-
-  @@unique([user_id, patient_id])
+model Patient {
+  id                        String                    @id @default(uuid())
+  userId                    String                    @map("user_id")
+  patientId                 String                    @map("patient_id")
+  name                      String
+  age                       Int
+  sex                       String
+  ethnicity                 String
+  religion                  String
+  nidNumber                 String?                   @map("nid_number")
+  patientMobile             String                    @map("patient_mobile")
+  spouseMobile              String?                   @map("spouse_mobile")
+  district                  String
+  shortHistory              String                    @map("short_history")
+  surgicalHistory           String                    @map("surgical_history")
+  familyHistory             String                    @map("family_history")
+  pastIllness               String                    @map("past_illness")
+  tags                      String[]
+  specialNotes              String                    @map("special_notes")
+  finalDiagnosis            String                    @map("final_diagnosis")
+  createdAt                 DateTime                  @default(now()) @map("created_at")
+  updatedAt                 DateTime                  @updatedAt @map("updated_at")
+  dateOfBirth               DateTime                  @map("date_of_birth")
+  firstDegreeRelativeMobile String                    @map("first_degree_relative_mobile")
+  addressDetails            String?                   @map("address_details")
+  user                      User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  investigationSessions     InvestigationSession[]
+  patientImages             PatientImage[]
+  patientExaminations       PatientExamination[]
+  patientHematologyPanels   PatientHematologyPanel[]
+  patientLftPanels          PatientLftPanel[]
+  patientRftPanels          PatientRftPanel[]
+  
+  @@unique([userId, patientId])
+  @@index([userId])
   @@index([name])
-  @@index([patient_mobile])
-  @@index([user_id])
+  @@index([patientMobile])
+  @@map("patients")
 }
 
-model rft_results {
-  id                     String                 @id
-  session_id             String
-  test_name              String
-  value                  String
-  unit                   String?
-  is_favourite           Boolean                @default(false)
-  notes                  String?
-  created_at             DateTime               @default(now())
-  investigation_sessions investigation_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
-
-  @@index([session_id])
+model PatientImage {
+  id          String   @id @default(uuid())
+  patientId   String   @map("patient_id")
+  imagePath   String   @map("image_path")
+  imageType   String   @map("image_type")
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  patient     Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  
+  @@index([patientId])
+  @@map("patient_images")
 }
 
-model users {
-  id            String     @id
-  username      String     @unique
-  email         String?    @unique
-  password_hash String
-  created_at    DateTime   @default(now())
-  updated_at    DateTime
-  patients      patients[]
+model InvestigationSession {
+  id                 String               @id @default(uuid())
+  patientId          String               @map("patient_id")
+  investigationDate  DateTime             @map("investigation_date") @db.Date
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @updatedAt @map("updated_at")
+  patient            Patient              @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  hematologyResults  HematologyResult[]
+  lftResults         LftResult[]
+  rftResults         RftResult[]
+  investigationImage InvestigationImage[]
+  
+  @@index([patientId])
+  @@map("investigation_sessions")
+}
+
+model InvestigationImage {
+  id              String               @id @default(uuid())
+  investigationId String               @map("investigation_id")
+  imagePath       String               @map("image_path")
+  imageType       String               @map("image_type")
+  description     String?
+  createdAt       DateTime             @default(now()) @map("created_at")
+  investigation   InvestigationSession @relation(fields: [investigationId], references: [id], onDelete: Cascade)
+  
+  @@index([investigationId])
+  @@map("investigation_images")
+}
+
+model HematologyResult {
+  id          String               @id @default(uuid())
+  sessionId   String               @map("session_id")
+  testName    String               @map("test_name")
+  value       String
+  unit        String?
+  isFavourite Boolean              @default(false) @map("is_favourite")
+  notes       String?
+  createdAt   DateTime             @default(now()) @map("created_at")
+  session     InvestigationSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  @@index([sessionId])
+  @@map("hematology_results")
+}
+
+model LftResult {
+  id          String               @id @default(uuid())
+  sessionId   String               @map("session_id")
+  testName    String               @map("test_name")
+  value       String
+  unit        String?
+  testMethod  String?              @map("test_method")
+  isFavourite Boolean              @default(false) @map("is_favourite")
+  notes       String?
+  createdAt   DateTime             @default(now()) @map("created_at")
+  session     InvestigationSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  @@index([sessionId])
+  @@map("lft_results")
+}
+
+model RftResult {
+  id          String               @id @default(uuid())
+  sessionId   String               @map("session_id")
+  testName    String               @map("test_name")
+  value       String
+  unit        String?
+  isFavourite Boolean              @default(false) @map("is_favourite")
+  notes       String?
+  createdAt   DateTime             @default(now()) @map("created_at")
+  session     InvestigationSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  @@index([sessionId])
+  @@map("rft_results")
+}
+
+model PatientExamination {
+  id         String   @id @default(uuid())
+  patientId  String   @map("patient_id")
+  recordedAt DateTime @map("recorded_at")
+  values     Json
+  meta       Json?
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  patient    Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([patientId, recordedAt])
+  @@map("patient_examinations")
+}
+
+model PatientHematologyPanel {
+  id         String   @id @default(uuid())
+  patientId  String   @map("patient_id")
+  recordedAt DateTime @map("recorded_at")
+  values     Json
+  meta       Json?
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  patient    Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([patientId, recordedAt])
+  @@map("patient_hematology_panels")
+}
+
+model PatientLftPanel {
+  id         String   @id @default(uuid())
+  patientId  String   @map("patient_id")
+  recordedAt DateTime @map("recorded_at")
+  values     Json
+  meta       Json?
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  patient    Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([patientId, recordedAt])
+  @@map("patient_lft_panels")
+}
+
+model PatientRftPanel {
+  id         String   @id @default(uuid())
+  patientId  String   @map("patient_id")
+  recordedAt DateTime @map("recorded_at")
+  values     Json
+  meta       Json?
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  patient    Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([patientId, recordedAt])
+  @@map("patient_rft_panels")
 }

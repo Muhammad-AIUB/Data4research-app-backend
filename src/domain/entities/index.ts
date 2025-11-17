@@ -6,3 +6,4 @@ export * from './LFTResult';
 export * from './RFTResult';
 export * from './PatientImage';
 export * from './InvestigationImage';
+export * from './PatientClinicalEntry';

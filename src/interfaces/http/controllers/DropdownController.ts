@@ -9,7 +9,12 @@ import {
   HEMATOLOGY_TEST_NAMES,
   LFT_TEST_NAMES,
   RFT_TEST_NAMES,
-  TEST_METHODS
+  TEST_METHODS,
+  CLINICAL_DROPDOWNS,
+  ON_EXAMINATION_FIELDS,
+  HEMATOLOGY_FIELDS,
+  LFT_FIELDS,
+  RFT_FIELDS
 } from '@/shared/constants';
 
 export class DropdownController {
@@ -26,7 +31,16 @@ export class DropdownController {
           hematologyTestNames: Array.from(HEMATOLOGY_TEST_NAMES),
           lftTestNames: Array.from(LFT_TEST_NAMES),
           rftTestNames: Array.from(RFT_TEST_NAMES),
-          testMethods: Array.from(TEST_METHODS)
+          testMethods: Array.from(TEST_METHODS),
+          clinical: {
+            dropdowns: CLINICAL_DROPDOWNS,
+            fields: {
+              onExamination: ON_EXAMINATION_FIELDS,
+              hematology: HEMATOLOGY_FIELDS,
+              lft: LFT_FIELDS,
+              rft: RFT_FIELDS
+            }
+          }
         }
       });
     } catch (error) {

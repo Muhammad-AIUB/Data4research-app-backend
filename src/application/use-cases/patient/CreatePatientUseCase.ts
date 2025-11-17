@@ -34,9 +34,8 @@ export class CreatePatientUseCase {
       throw new ValidationError(`Patient with mobile ${dto.patientMobile} already exists`);
     }
 
-    // Calculate age from dateOfBirth if not provided or doesn't match
-    const calculatedAge = calculateAge(dto.dateOfBirth);
-    const age = dto.age && Math.abs(dto.age - calculatedAge) <= 1 ? dto.age : calculatedAge;
+    // Calculate age from dateOfBirth
+    const age = calculateAge(dto.dateOfBirth);
 
     // Set default religion to Islam if not provided
     const religion = dto.religion || RELIGION_DEFAULT;
