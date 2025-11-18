@@ -127,7 +127,9 @@ const ensureAdminUser = async () => {
   logger.info(`Default admin user created (username: ${adminUsername}).`);
 };
 
-const startServer = async (): Promise<void> => {
+let serverInstance: any = null;
+
+const startServer = async (): Promise<any> => {
   console.log(`🚀 Starting Data4Research App Backend...`);
   console.log(`📍 Environment: ${appConfig.nodeEnv}`);
   console.log(`🌐 Port: ${appConfig.port}`);
@@ -184,8 +186,8 @@ const startServer = async (): Promise<void> => {
   }
   
   // Start HTTP server
-  app.listen(appConfig.port, () => {
-    logger.info(`Server running on port ${appConfig.port}`);
+  serverInstance = app.listen(process.env.PORT || appConfig.port, () => {
+    logger.info(`Server running on port ${process.env.PORT || appConfig.port}`);
     logger.info(`Environment: ${appConfig.nodeEnv}`);
     logger.info(`API Version: ${appConfig.apiVersion}`);
     console.log(`✅ Server ready!`);
@@ -215,9 +217,9 @@ const gracefulShutdown = async (signal: string) => {
   
   try {
     // Close server
-    if (app.listening) {
+    if (serverInstance && serverInstance.listening) {
       await new Promise<void>((resolve) => {
-        app.close(() => {
+        serverInstance.close(() => {
           logger.info('HTTP server closed');
           resolve();
         });
