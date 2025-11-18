@@ -6,7 +6,7 @@
     "scripts": {
         "dev": "tsx watch src/server.ts",
         "build": "tsc",
-        "start": "node -r tsconfig-paths/register dist/server.js",
+        "start": "tsx src/server.ts",
         "prisma:generate": "prisma generate",
         "prisma:migrate": "prisma migrate dev",
         "test:db": "tsx scripts/test-db-connection.ts",
@@ -38,7 +38,9 @@
         "ioredis": "^5.8.2",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
+    "tsx": "^4.19.1",
     "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.6.2",
     "uuid": "^10.0.0",
     "winston": "^3.15.0",
     "zod": "^3.23.8"
@@ -54,8 +56,9 @@
         "@types/node": "^22.7.5",
         "@types/uuid": "^10.0.0",
         "prisma": "^5.20.0",
-        "ts-node": "^10.9.2",
-        "tsx": "^4.19.1",
-        "typescript": "^5.6.2"
+        "ts-node": "^10.9.2"
+    },
+    "tsx": {
+        "tsconfig": "./tsconfig.json"
     }
 }
