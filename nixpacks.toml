@@ -8,7 +8,7 @@ cmds = ['npm ci']
 cmds = ['npm run prisma:generate']
 
 [start]
-cmd = 'npm start'
+cmd = 'tsx src/server.ts'
 
 [variables]
 NODE_ENV = 'production'
