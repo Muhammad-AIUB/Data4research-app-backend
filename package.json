@@ -6,7 +6,7 @@
     "scripts": {
         "dev": "tsx watch src/server.ts",
         "build": "tsc",
-        "start": "node dist/server.js",
+        "start": "node -r tsconfig-paths/register dist/server.js",
         "prisma:generate": "prisma generate",
         "prisma:migrate": "prisma migrate dev",
         "test:db": "tsx scripts/test-db-connection.ts",
@@ -36,11 +36,12 @@
         "form-data": "^4.0.4",
         "helmet": "^7.1.0",
         "ioredis": "^5.8.2",
-        "jsonwebtoken": "^9.0.2",
-        "multer": "^2.0.2",
-        "uuid": "^10.0.0",
-        "winston": "^3.15.0",
-        "zod": "^3.23.8"
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
+    "tsconfig-paths": "^4.2.0",
+    "uuid": "^10.0.0",
+    "winston": "^3.15.0",
+    "zod": "^3.23.8"
     },
     "devDependencies": {
         "@types/bcryptjs": "^2.4.6",
